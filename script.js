@@ -122,11 +122,6 @@ let lastKnockTime = 0;
 let knockIndex = 0;
 const secretPattern = [1, 1, 1, 2, 2]; // 3 quick knocks, pause, 2 knocks
 
-// Event Listeners
-trickBtn.addEventListener('click', showTrick);
-treatBtn.addEventListener('click', showTreat);
-closeScareBtn.addEventListener('click', goBack);
-backBtn.addEventListener('click', goBack);
 // Add both touch and click events for better mobile support
 const registerKnockEvent = (e) => {
     e.preventDefault();
@@ -191,32 +186,45 @@ async function showTrick() {
             // Configure video element for mobile compatibility
             videoElement.setAttribute('playsinline', 'true');
             videoElement.controls = true;
-            videoElement.autoplay = true;
 
-            // Start muted for mobile autoplay (iOS requirement)
-            // User can unmute with volume controls
-            videoElement.muted = true;
+            // Detect if mobile device
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            // Start muted on mobile for autoplay to work, unmuted on desktop
+            videoElement.muted = isMobile;
             videoElement.volume = 1.0;
 
             // Load and play
             videoElement.load();
-            videoElement.play().then(() => {
-                console.log('Video started playing');
-                // Update mute button to reflect initial muted state
-                if (muteBtn) {
-                    muteBtn.textContent = '🔇';
-                    isMuted = true;
-                }
-                if (volumeSlider) {
-                    volumeSlider.value = 0;
-                }
-                // User can unmute with volume controls
-            }).catch(e => {
-                console.error('Error playing video:', e);
-                // If autoplay fails, show a play button overlay
-                videoElement.muted = false;
-                videoElement.controls = true;
-            });
+
+            // Try to play
+            const playPromise = videoElement.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log('Video started playing');
+                    // Update mute button to reflect actual state
+                    if (muteBtn) {
+                        muteBtn.textContent = videoElement.muted ? '🔇' : '🔊';
+                        isMuted = videoElement.muted;
+                    }
+                    if (volumeSlider) {
+                        volumeSlider.value = videoElement.muted ? 0 : 1;
+                    }
+                }).catch(e => {
+                    console.error('Autoplay blocked, trying muted:', e);
+                    // If autoplay fails (probably on mobile), try with muted
+                    videoElement.muted = true;
+                    videoElement.play().catch(err => {
+                        console.error('Video playback failed:', err);
+                    });
+                    // Update UI
+                    if (muteBtn) {
+                        muteBtn.textContent = '🔇';
+                        isMuted = true;
+                    }
+                });
+            }
         } else {
             throw new Error('No local videos found');
         }
@@ -414,9 +422,18 @@ function goBack() {
 function registerKnock() {
     const currentTime = Date.now();
     const timeSinceLastKnock = currentTime - lastKnockTime;
-    
-    // Determine if it's a quick knock (< 500ms) or after a pause
-    let knockType = (timeSinceLastKnock < 500 && knockIndex < 3) ? 1 : 2;
+
+    // Determine if it's a quick knock (< 600ms) or after a pause (> 600ms)
+    // Type 1 = quick knock (for first 3 knocks)
+    // Type 2 = knock after pause (for last 2 knocks)
+    let knockType;
+    if (knockIndex < 3) {
+        // For first 3 knocks, they should be quick
+        knockType = 1;
+    } else {
+        // For knocks 4 and 5, check if there was a pause before them
+        knockType = (timeSinceLastKnock > 600) ? 2 : 1;
+    }
 
     knockPattern.push(knockType);
     lastKnockTime = currentTime;
@@ -546,6 +563,7 @@ function resetKnockGame() {
 trickBtn.addEventListener('click', showTrick);
 treatBtn.addEventListener('click', showTreat);
 closeScareBtn.addEventListener('click', goBack);
+backBtn.addEventListener('click', goBack);
 
 // Add shake animation for wrong pattern
 const style = document.createElement('style');
