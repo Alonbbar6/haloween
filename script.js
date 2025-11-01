@@ -15,8 +15,7 @@ const volumeSlider = document.getElementById('volumeSlider');
 // List of video files (using the actual filenames in the project)
 const videoFiles = [
     'download.MP4',  // Using the actual filename from your directory listing
-    'the.MP4',
-    'bonusTreat.MP4'
+    'the.MP4'
 ];
 
 // Function to get the correct URL for a video file
@@ -162,43 +161,47 @@ async function showTrick() {
     videoElement.innerHTML = '<div class="loading">Loading spooky content... 👻</div>';
     
     try {
-        // First try to load a random video from the web as fallback
-        const webVideos = [
-            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
-        ];
-        
-        const randomWebVideo = webVideos[Math.floor(Math.random() * webVideos.length)];
-        
-        // Try to play the web video first
-        const canPlayWebVideo = await checkVideoExists(randomWebVideo);
-        
-        if (canPlayWebVideo) {
-            // If web video is accessible, use it
-            setupVideoElement(videoElement, randomWebVideo);
-            return;
-        }
-        
-        // If web videos fail, try local videos
+        // Only use local videos
         const availableVideos = [];
+        
+        // Check which videos exist in the videoFiles array
         for (const video of videoFiles) {
             try {
-                const exists = await checkVideoExists(video);
-                if (exists) {
-                    availableVideos.push(video);
-                }
+                // For local files, we'll assume they exist if they're in the array
+                availableVideos.push(video);
             } catch (e) {
-                console.warn(`Error checking video ${video}:`, e);
+                console.warn(`Error with video ${video}:`, e);
             }
         }
         
         if (availableVideos.length > 0) {
-            const randomLocalVideo = availableVideos[Math.floor(Math.random() * availableVideos.length)];
-            const videoUrl = getVideoUrl(randomLocalVideo);
-            console.log('Loading video:', videoUrl);
-            setupVideoElement(videoElement, videoUrl);
+            // Select a random video from available local videos
+            const randomVideo = availableVideos[Math.floor(Math.random() * availableVideos.length)];
+            console.log('Loading local video:', randomVideo);
+
+            // Clear existing content and set the video source
+            videoElement.innerHTML = '';
+
+            // Create and add source element
+            const source = document.createElement('source');
+            source.src = randomVideo;  // Just use the filename directly
+            source.type = 'video/mp4';
+            videoElement.appendChild(source);
+
+            // Configure video element
+            videoElement.volume = 1.0;
+            videoElement.muted = false;
+            videoElement.controls = true;
+            videoElement.autoplay = true;
+
+            // Load and play
+            videoElement.load();
+            videoElement.play().catch(e => {
+                console.error('Error playing video:', e);
+                // If autoplay fails, user can click play manually
+            });
         } else {
-            throw new Error('No videos available');
+            throw new Error('No local videos found');
         }
     } catch (error) {
         console.error('Error loading videos:', error);
@@ -373,18 +376,9 @@ async function showTrick() {
 function showTreat() {
     mainScreen.classList.add('hidden');
     treatScreen.classList.remove('hidden');
-    
-    // Show bonus candy immediately
-    const successMessage = document.getElementById('successMessage');
-    if (successMessage) {
-        successMessage.classList.remove('hidden');
-        createCandyRain();
-    }
-    
-    // Optional: Automatically go back after 5 seconds
-    setTimeout(() => {
-        goBack();
-    }, 5000);
+
+    // Reset the knock game when entering treat screen
+    resetKnockGame();
 }
 
 function goBack() {
@@ -530,6 +524,11 @@ function resetKnockGame() {
     successMessage.classList.add('hidden');
     knockArea.style.animation = '';
 }
+
+// Add event listeners for the buttons
+trickBtn.addEventListener('click', showTrick);
+treatBtn.addEventListener('click', showTreat);
+closeScareBtn.addEventListener('click', goBack);
 
 // Add shake animation for wrong pattern
 const style = document.createElement('style');
