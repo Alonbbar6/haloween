@@ -174,18 +174,12 @@ async function showTrick() {
             const randomVideo = availableVideos[Math.floor(Math.random() * availableVideos.length)];
             console.log('Loading local video:', randomVideo);
 
-            // Clear existing content and set the video source
-            videoElement.innerHTML = '';
-
-            // Create and add source element
-            const source = document.createElement('source');
-            source.src = randomVideo;  // Just use the filename directly
-            source.type = 'video/mp4';
-            videoElement.appendChild(source);
-
             // Configure video element for mobile compatibility
-            videoElement.setAttribute('playsinline', 'true');
+            videoElement.setAttribute('playsinline', '');
             videoElement.controls = true;
+
+            // Set the video source directly on the src attribute
+            videoElement.src = randomVideo;
 
             // Detect if mobile device
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -194,7 +188,7 @@ async function showTrick() {
             videoElement.muted = isMobile;
             videoElement.volume = 1.0;
 
-            // Load and play
+            // Load the video
             videoElement.load();
 
             // Try to play
@@ -202,7 +196,7 @@ async function showTrick() {
 
             if (playPromise !== undefined) {
                 playPromise.then(() => {
-                    console.log('Video started playing');
+                    console.log('Video playing successfully');
                     // Update mute button to reflect actual state
                     if (muteBtn) {
                         muteBtn.textContent = videoElement.muted ? '🔇' : '🔊';
@@ -212,17 +206,26 @@ async function showTrick() {
                         volumeSlider.value = videoElement.muted ? 0 : 1;
                     }
                 }).catch(e => {
-                    console.error('Autoplay blocked, trying muted:', e);
-                    // If autoplay fails (probably on mobile), try with muted
+                    console.error('Autoplay blocked, retrying muted:', e);
+                    // If autoplay fails, try with muted
                     videoElement.muted = true;
-                    videoElement.play().catch(err => {
-                        console.error('Video playback failed:', err);
+                    videoElement.load();
+                    videoElement.play().then(() => {
+                        console.log('Video playing muted');
+                        if (muteBtn) {
+                            muteBtn.textContent = '🔇';
+                            isMuted = true;
+                        }
+                    }).catch(err => {
+                        console.error('Video playback completely failed:', err);
+                        // Show error message
+                        videoElement.innerHTML = `
+                            <div style="color: white; padding: 20px; text-align: center;">
+                                <p>Unable to load video 😱</p>
+                                <p>Try refreshing the page</p>
+                            </div>
+                        `;
                     });
-                    // Update UI
-                    if (muteBtn) {
-                        muteBtn.textContent = '🔇';
-                        isMuted = true;
-                    }
                 });
             }
         } else {
@@ -410,12 +413,13 @@ function goBack() {
     mainScreen.classList.remove('hidden');
     scareScreen.classList.add('hidden');
     treatScreen.classList.add('hidden');
-    
+
     // Pause and reset the video
-    if (scareVideo) {
-        scareVideo.pause();
-        scareVideo.currentTime = 0;
-        scareVideo.controls = false; // Hide controls until needed
+    const videoElement = document.getElementById('scareVideo');
+    if (videoElement) {
+        videoElement.pause();
+        videoElement.currentTime = 0;
+        videoElement.src = ''; // Clear source to free memory
     }
 }
 
