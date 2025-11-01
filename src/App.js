@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import './App.css';
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
         setIsMuted(isMobile);
 
         videoRef.current.load();
-        videoRef.current.play().catch(e => {
+        videoRef.current.play().catch(() => {
           // If fails, try muted
           videoRef.current.muted = true;
           setIsMuted(true);
