@@ -188,17 +188,34 @@ async function showTrick() {
             source.type = 'video/mp4';
             videoElement.appendChild(source);
 
-            // Configure video element
-            videoElement.volume = 1.0;
-            videoElement.muted = false;
+            // Configure video element for mobile compatibility
+            videoElement.setAttribute('playsinline', 'true');
             videoElement.controls = true;
             videoElement.autoplay = true;
 
+            // Start muted for mobile autoplay (iOS requirement)
+            // User can unmute with volume controls
+            videoElement.muted = true;
+            videoElement.volume = 1.0;
+
             // Load and play
             videoElement.load();
-            videoElement.play().catch(e => {
+            videoElement.play().then(() => {
+                console.log('Video started playing');
+                // Update mute button to reflect initial muted state
+                if (muteBtn) {
+                    muteBtn.textContent = '🔇';
+                    isMuted = true;
+                }
+                if (volumeSlider) {
+                    volumeSlider.value = 0;
+                }
+                // User can unmute with volume controls
+            }).catch(e => {
                 console.error('Error playing video:', e);
-                // If autoplay fails, user can click play manually
+                // If autoplay fails, show a play button overlay
+                videoElement.muted = false;
+                videoElement.controls = true;
             });
         } else {
             throw new Error('No local videos found');
