@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎃 Trick or Treat 🎃</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div id="mainScreen">
+            <h1>🎃 TRICK OR TREAT? 🎃</h1>
+            <div class="buttons">
+                <button class="btn btn-trick" id="trickBtn">👻 TRICK</button>
+                <button class="btn btn-treat" id="treatBtn">🍬 TREAT</button>
+            </div>
+        </div>
+
+        <div id="scareScreen" class="hidden">
+            <div class="scare-container">
+                <button class="close-btn" id="closeScareBtn">✕ Close</button>
+                <div class="video-container">
+                    <video id="scareVideo" class="scare-video" controls autoplay playsinline>
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="volume-control">
+                        <button id="muteBtn" class="volume-btn">🔊</button>
+                        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="1">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="treatScreen" class="hidden knock-game">
+            <h2 class="knock-text">🚪 Knock the Secret Pattern! 🚪</h2>
+            <p class="knock-instructions">Knock 3 times, pause, then knock 2 times</p>
+            
+            <div class="knock-pattern">
+                <div class="knock-dot" id="knock1"></div>
+                <div class="knock-dot" id="knock2"></div>
+                <div class="knock-dot" id="knock3"></div>
+                <div class="knock-dot" id="knock4"></div>
+                <div class="knock-dot" id="knock5"></div>
+            </div>
+
+            <div class="knock-area" id="knockArea">
+                <p>👊 KNOCK HERE 👊</p>
+            </div>
+
+            <div id="successMessage" class="hidden success-message">
+                🎉 BONUS CANDY UNLOCKED! 🎉
+            </div>
+
+            <button class="back-btn" id="backBtn">← Back</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

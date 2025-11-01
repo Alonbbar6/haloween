@@ -1,0 +1,323 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Safari-specific fixes */
+@supports (-webkit-touch-callout: none) {
+    body {
+        height: -webkit-fill-available;
+    }
+}
+
+body {
+    font-family: -apple-system, 'Arial Black', Arial, sans-serif;
+    background: -webkit-linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+}
+
+h1 {
+    font-size: 4em;
+    color: #ff6b35;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+    margin-bottom: 50px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@-webkit-keyframes float {
+    0%, 100% { -webkit-transform: translateY(0px); transform: translateY(0px); }
+    50% { -webkit-transform: translateY(-20px); transform: translateY(-20px); }
+}
+
+@keyframes float {
+    0%, 100% { -webkit-transform: translateY(0px); transform: translateY(0px); }
+    50% { -webkit-transform: translateY(-20px); transform: translateY(-20px); }
+}
+
+.buttons {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.btn {
+    padding: 30px 50px;
+    font-size: 2em;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    -webkit-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.btn-trick {
+    background: linear-gradient(135deg, #8b0000, #ff0000);
+    color: white;
+}
+
+.btn-trick:hover {
+    transform: scale(1.1) rotate(-2deg);
+    box-shadow: 0 12px 30px rgba(255, 0, 0, 0.6);
+}
+
+.btn-treat {
+    background: linear-gradient(135deg, #ff6b35, #ffa500);
+    color: white;
+}
+
+.btn-treat:hover {
+    transform: scale(1.1) rotate(2deg);
+    box-shadow: 0 12px 30px rgba(255, 165, 0, 0.6);
+}
+
+.hidden {
+    display: none;
+}
+
+.scare-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.scare-video {
+    width: 100%;
+    max-height: 80vh;
+    display: block;
+    background: #000;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 20px;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    transition: opacity 0.3s ease;
+}
+
+.video-container:hover .volume-control {
+    opacity: 1;
+}
+
+.volume-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.volume-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+#volumeSlider {
+    width: 100px;
+    height: 5px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    outline: none;
+    transition: opacity 0.2s;
+}
+
+#volumeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #ff6b35;
+    cursor: pointer;
+}
+
+#volumeSlider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #ff6b35;
+    cursor: pointer;
+    border: none;
+}
+
+.close-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border-radius: 10px;
+    z-index: 1001;
+}
+
+.knock-game {
+    background: rgba(255, 107, 53, 0.2);
+    padding: 40px;
+    border-radius: 20px;
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+}
+
+.knock-area {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 80px;
+    border-radius: 15px;
+    margin: 30px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 3px dashed #ff6b35;
+}
+
+.knock-area:active {
+    transform: scale(0.95);
+    background: rgba(255, 107, 53, 0.3);
+}
+
+.knock-text {
+    font-size: 2em;
+    color: #ffa500;
+    margin-bottom: 20px;
+}
+
+.knock-instructions {
+    color: white;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+}
+
+.knock-pattern {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.knock-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s;
+}
+
+.knock-dot.active {
+    background: #ff6b35;
+    transform: scale(1.3);
+}
+
+.success-message {
+    font-size: 2.5em;
+    color: #00ff00;
+    text-shadow: 0 0 20px #00ff00;
+    animation: pulse 1s infinite;
+    margin: 20px 0;
+}
+
+@-webkit-keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.candy-rain {
+    position: fixed;
+    font-size: 3em;
+    animation: fall 3s linear;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+@-webkit-keyframes fall {
+    to {
+        -webkit-transform: translateY(100vh) rotate(360deg);
+                transform: translateY(100vh) rotate(360deg);
+    }
+}
+
+@keyframes fall {
+    to {
+        -webkit-transform: translateY(100vh) rotate(360deg);
+                transform: translateY(100vh) rotate(360deg);
+    }
+}
+
+.back-btn {
+    background: #444;
+    color: white;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: background 0.3s;
+}
+
+.back-btn:hover {
+    background: #666;
+}
